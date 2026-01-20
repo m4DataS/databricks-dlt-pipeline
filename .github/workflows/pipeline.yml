@@ -42,7 +42,7 @@ jobs:
     needs: build  # ensures build runs first
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist/
