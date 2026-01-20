@@ -44,9 +44,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: repo
-          path: |
-            databricks.yml
-            other_folder_you_need/**   # optional: include any other files needed
+          path: .  # include all files
           retention-days: 1
 
 
