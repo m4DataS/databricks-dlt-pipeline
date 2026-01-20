@@ -12,21 +12,27 @@ jobs:
     name: Build Python Wheel
     runs-on: ubuntu-latest
     steps:
+
+      # 1. Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
+      # 3. Install build dependencies
       - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel build
 
+      # 4. Build wheel
       - name: Build wheel
         run: python -m build
 
+      # 5. Upload wheel artifact
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -34,6 +40,14 @@ jobs:
           path: dist/
           retention-days: 1   # equivalent to expire_in
 
+      # 6. Upload repo files (for deploy/validate)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repo
+          path: |
+            databricks.yml
+            other_folder_you_need/**   # optional: include any other files needed
+          retention-days: 1
 
 
   deploy:
