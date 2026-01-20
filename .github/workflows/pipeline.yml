@@ -70,3 +70,4 @@ jobs:
         run: |
           echo "Validating wheel bundle..."
           databricks bundle validate --target $TARGET --profile $TARGET
+        working-directory: ${{ github.workspace }}
