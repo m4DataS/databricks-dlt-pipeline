@@ -1,0 +1,36 @@
+# from pyspark import pipelines as dp
+# from pyspark.sql.functions import *
+
+# # Replace with the catalog and schema name that
+# # you are using:
+# path = "/Volumes/dev_data_cloud_cicd/demo_da_cicd/raw_data/customers/"
+
+
+# # Create the target bronze table
+# dp.create_streaming_table("customers_cdc_bronze", comment="New customer data incrementally ingested from cloud object storage landing zone")
+
+# # Create an Append Flow to ingest the raw data into the bronze table
+# @dp.append_flow(
+#   target = "customers_cdc_bronze",
+#   name = "customers_bronze_ingest_flow"
+# )
+# def customers_bronze_ingest_flow():
+#   return (
+#       spark.readStream
+#           .format("cloudFiles")
+#           .option("cloudFiles.format", "json")
+#           .option("cloudFiles.inferColumnTypes", "true")
+#           .load(f"{path}")
+#   )
+
+# transformations/bronze.py
+from pyspark import pipelines as dp
+from utilities.bronze import load_raw_customers
+
+PATH = "/Volumes/dev_data_cloud_cicd/demo_da_cicd/raw_data/customers/"
+
+dp.create_streaming_table("2_customers_cdc_bronze")
+
+@dp.append_flow(target="2_customers_cdc_bronze")
+def customers_bronze_ingest_flow():
+    return load_raw_customers(PATH)

@@ -1,0 +1,47 @@
+---
+resources:
+
+  volumes:
+    demo_volume:
+      catalog_name: dev_data_cloud_cicd
+      schema_name: demo_da_cicd
+      name: demo_da_cicd_volume_DAB
+      volume_type: MANAGED
+      comment: "Volume for storing wheel files"
+
+  pipelines:
+    pipeline_test_dlt:
+      name: test_dlt
+      libraries:
+        - glob:
+            include: ${workspace.root_path}/files/transformations/**
+        #  - whl: dist/utilities-0.1.0-py3-none-any.whl. ### doesn't work with DLT pipeline : need volume
+      schema: demo_da_cicd
+      photon: false
+      catalog: dev_data_cloud_cicd
+      serverless: true
+      root_path: ${workspace.root_path}
+      environment:
+        dependencies:
+          - /Volumes/dev_data_cloud_cicd/demo_da_cicd/demo_da_cicd_volume/utilities-0.1.0-py3-none-any.whl
+
+
+
+  jobs:
+    test_DLT_wheel_job:
+      name: test_DLT_wheel_job
+      email_notifications:
+        on_failure:
+          - manoah.abenzoar@openvalue.fr
+      notification_settings:
+        no_alert_for_skipped_runs: true
+      trigger:
+        pause_status: UNPAUSED
+        periodic:
+          interval: 1
+          unit: DAYS
+      tasks:
+        - task_key: run_dlt_pipeline
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.pipeline_test_dlt.id}
+      performance_target: STANDARD

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "utilities"
+version = "0.1.0"
+description = "Shared helper functions for DLT transformations"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+
+# Optional but recommended
+dependencies = [
+    "pyspark",
+]
+
+# Makes sure utilities/ is included
+[tool.setuptools.package-data]
+utilities = ["*.py"]
+
+
+[tool.setuptools.packages.find]
+include = ["utilities"]
