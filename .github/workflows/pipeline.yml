@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  TARGET: wksp_free_edition  # Global variable
+  TARGET: dev  # Global variable
 
 jobs:
   build:
