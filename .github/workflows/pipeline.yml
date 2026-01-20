@@ -69,5 +69,6 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           echo "Validating wheel bundle..."
+          ls
           databricks bundle validate --target $TARGET --profile $TARGET
         working-directory: ${{ github.workspace }}
