@@ -55,6 +55,13 @@ jobs:
           echo "::add-mask::$USER_EMAIL"
           echo "::add-mask::$USER_PATH"
 
+      - name: Install Databricks CLI & SDK
+        run: |
+          sudo apt-get update && sudo apt-get install -y curl jq unzip
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | bash
+          python -m pip install --upgrade pip
+          pip install databricks-sd
+
       - name: Run Databricks bundle validation
         env:
           TARGET: ${{ env.TARGET }}
