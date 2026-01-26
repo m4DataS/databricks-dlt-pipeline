@@ -1,0 +1,17 @@
+---
+resources:
+
+  volumes:
+    dlt_wheel_volume:
+      catalog_name: dev_data_cloud_cicd
+      schema_name: demo_da_cicd
+      name: dlt_wheel_volume
+      volume_type: MANAGED
+      comment: "DLT Volume for storing wheel files"
+
+    raw_dlt_wheel_volume:
+      catalog_name: dev_data_cloud_cicd
+      schema_name: demo_da_cicd
+      name: raw_data
+      volume_type: MANAGED
+      comment: "DLT Volume for storing raw data from data_creation notebook"

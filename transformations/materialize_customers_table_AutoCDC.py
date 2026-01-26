@@ -16,10 +16,10 @@
 from pyspark import pipelines as dp
 from utilities.materialize_1 import cdc_materialization_params
 
-dp.create_streaming_table(name="2_customers_dlt", comment="Clean, materialized customers")
+dp.create_streaming_table(name="customers_dlt", comment="Clean, materialized customers")
 
 dp.create_auto_cdc_flow(
-    target="2_customers_dlt",
-    source="2_customers_cdc_clean",
+    target="customers_dlt",
+    source="customers_cdc_clean",
     **cdc_materialization_params()
 )

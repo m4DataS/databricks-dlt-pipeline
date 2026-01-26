@@ -18,8 +18,8 @@
 #   )
 
 from pyspark import pipelines as dp
-from utilities.materialize_2_aggregates import compute_customer_history
+from utilities.materialize_aggregates import compute_customer_history
 
-@dp.table(name="2_customers_history_agg")
+@dp.table(name="customers_history_agg")
 def customers_history_agg():
     return compute_customer_history()

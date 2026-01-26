@@ -1,0 +1,82 @@
+stages:
+  - .pre
+  - test
+  - deploy
+  - run
+
+variables:
+  TARGET: "dev"
+
+.dbks:
+  stage: .pre
+  image: debian:stable-slim
+  before_script:
+    # Install dependencies for Azure CLI and Databricks CLI
+    - apt-get update && apt-get install -y curl unzip python3 python3-pip bash git
+    # Install Azure CLI
+    - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+    - az version
+    # Install Databricks CLI
+    - curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+    - databricks version
+
+dbks_prepare:
+  stage: .pre
+  image: python:3.10
+  script:
+    - pip install build
+    - echo "Building python utilities wheel"
+    - python -m build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour
+
+dbks_validate:
+  stage: test
+  extends: .dbks
+  needs:
+    - job: dbks_prepare
+      artifacts: true
+  script:
+    - cd bundles/foundation
+    - ls
+    - echo "Validateion of Databricks Asset Bundle foundation"
+    - databricks bundle validate --target $TARGET
+    - cd ../..
+    - cd bundles/app
+    - ls
+    - echo "Validateion of Databricks Asset Bundle app"
+    - databricks bundle validate --target $TARGET
+
+dbks_deploy:
+  stage: deploy
+  extends: .dbks
+  needs:
+    - job: dbks_prepare
+      artifacts: true
+    - job: dbks_validate
+  script:
+    - cd bundles/foundation
+    - ls
+    - echo "Validateion of Databricks Asset Bundle foundation"
+    - databricks bundle deploy --target $TARGET
+    - cd ../..
+    - cd bundles/app
+    - ls
+    - echo "Validateion of Databricks Asset Bundle app"
+    - databricks bundle deploy --target $TARGET
+
+
+dbks_run:
+  stage: run
+  extends: .dbks
+  needs:
+    - job: dbks_prepare
+      artifacts: true
+    - job: dbks_deploy
+  script:
+    - cd bundles/app
+    - ls
+    - echo "Launch run of Databricks Asset Bundle app"
+    - databricks bundle run  dlt_wheel_job --target $TARGET

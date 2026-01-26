@@ -1,12 +1,15 @@
 ---
 bundle:
-  name: test_DLT_wheel
+  name: DLT_wheel_app_bundle
  
 include:
   - workflow.yml
  
-# sync:
-#   paths:
+sync:
+  paths:
+    - ../../explorations
+    - ../../transformations
+
 
 # artifacts:
 #   default:
@@ -21,12 +24,14 @@ variables:
     default: dev_data_cloud_cicd
   default_schema:
     default: demo_da_cicd
+  wheel_volume:
+    default: dlt_wheel_volume
   wheel_name: 
-    default: "utilities2-0.1.0-py3-none-any.whl"
+    default: utilities-0.1.0-py3-none-any.whl
 
 experimental:
   scripts:
-    predeploy: "databricks fs cp dist/${var.wheel_name} dbfs:/Volumes/dev_data_cloud_cicd/demo_da_cicd/demo_da_cicd_volume_DAB/ --overwrite --profile dev"
+    predeploy: "databricks fs cp ../../dist/${var.wheel_name} dbfs:/Volumes/${var.default_catalog}/${var.default_schema}/${var.wheel_volume}/ --overwrite --profile dev"
 
 targets:
   dev:
@@ -38,3 +43,4 @@ targets:
     permissions:
       - user_name: ${workspace.current_user.userName}
         level: CAN_MANAGE
+~/bundles

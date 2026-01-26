@@ -29,8 +29,8 @@ from utilities.bronze import load_raw_customers
 
 PATH = "/Volumes/dev_data_cloud_cicd/demo_da_cicd/raw_data/customers/"
 
-dp.create_streaming_table("2_customers_cdc_bronze")
+dp.create_streaming_table("customers_cdc_bronze")
 
-@dp.append_flow(target="2_customers_cdc_bronze")
+@dp.append_flow(target="customers_cdc_bronze")
 def customers_bronze_ingest_flow():
     return load_raw_customers(PATH)

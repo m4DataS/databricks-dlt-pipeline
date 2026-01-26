@@ -1,0 +1,55 @@
+---
+resources:
+
+  pipelines:
+    dlt_wheel_pipeline:
+      name: dlt_wheel_pipeline
+      libraries:
+        - glob:
+            include: ${workspace.root_path}/files/transformations/**
+              # - whl: /Volumes/dev_data_cloud_cicd/demo_da_cicd/utilities-0.1.0-py3-none-any.whl
+        #  - whl: dist/utilities-0.1.0-py3-none-any.whl. ### doesn't work with DLT pipeline : need volume
+      schema: demo_da_cicd
+      photon: false
+      catalog: dev_data_cloud_cicd
+      serverless: true
+      root_path: ${workspace.root_path}
+      environment:
+        dependencies:
+          - /Volumes/${var.default_catalog}/${var.default_schema}/${var.wheel_volume}/${var.wheel_name}
+
+
+
+  jobs:
+    dlt_wheel_job:
+      name: dlt_wheel_job
+      email_notifications:
+        on_failure:
+          - ${workspace.current_user.userName}
+      notification_settings:
+        no_alert_for_skipped_runs: true
+      trigger:
+        pause_status: UNPAUSED
+        periodic:
+          interval: 1
+          unit: DAYS
+      tasks:
+        - task_key: dlt_data_creation
+          notebook_task:
+            notebook_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}/files/explorations/data_creation
+            source: WORKSPACE
+
+        - task_key: dlt_data_exploration
+          depends_on:
+            - task_key: dlt_data_creation
+          notebook_task:
+            notebook_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}/files/explorations/exploration
+            source: WORKSPACE
+
+        - task_key: run_dlt_pipeline
+          depends_on:
+            - task_key: dlt_data_creation
+            - task_key: dlt_data_exploration
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.dlt_wheel_pipeline.id}
+      performance_target: STANDARD

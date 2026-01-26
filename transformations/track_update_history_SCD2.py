@@ -21,10 +21,10 @@
 from pyspark import pipelines as dp
 from utilities.scd2 import scd2_params
 
-dp.create_streaming_table("2_customers_history", comment="SCD2 history")
+dp.create_streaming_table("customers_history", comment="SCD2 history")
 
 dp.create_auto_cdc_flow(
-    target="2_customers_history",
-    source="2_customers_cdc_clean",
+    target="customers_history",
+    source="customers_cdc_clean",
     **scd2_params()
 )
